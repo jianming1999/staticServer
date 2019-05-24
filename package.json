@@ -1,0 +1,28 @@
+{
+  "name": "staticServer",
+  "version": "1.0.0",
+  "description": "staticServer",
+  "main": "index.js",
+  "scripts": {
+    "server": "DEBUG=staticServer node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jianming1999/staticServer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jianming1999/staticServer/issues"
+  },
+  "homepage": "https://github.com/jianming1999/staticServer#readme",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "debug": "^4.1.1",
+    "ejs": "^2.6.1",
+    "mime": "^2.4.3",
+    "zlib": "^1.0.5"
+  }
+}
