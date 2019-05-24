@@ -24,9 +24,11 @@ class Server {
 		if(this.cache(req, res, statObj)) return;
 		// 压缩
 		let s = this.compress(req, res, filePath, statObj);	
+		// 范围请求
+		let {start, end} = this.range(req, res, statObj);
 		// 设置文件类型
 		res.setHeader('Content-Type', mime.getType(filePath)+ ';charset=UTF-8');
-		let rs = fs.createReadStream(filePath);
+		let rs = fs.createReadStream(filePath, {start, end});
 		// 如果支持压缩，就应用压缩并返回压缩处理后的文件流
 		if(s){
 			rs.pipe(s).pipe(res);
@@ -95,6 +97,32 @@ class Server {
 		else{
 			return false;
 		}
+	}
+	// 范围请求
+	range(req, res, statObj){
+		// 范围请求的请求头(request header)：Range: bytes=1-100
+		// 服务器响应头 (response header): Accept-Ranges: bytes 1-100/${total}
+		// 服务器响应头（response header): Content-ranges: bytes
+		// 获取浏览器发送过来的请求头range 
+		let header = req.headers['range'],
+		// header => bytes=1-100
+		start = 0,
+		// 整个文件的大小
+		end = statObj.size;
+
+		if(header){
+			// 获取range中的范围start,end
+		    let [,s,e] = header.match(/bytes=(\d*)-(\d*)/);
+			start = s ? parseInt(s) : start;
+			end = s ? parseInt(e) : end;
+			// 告诉浏览器支持range的方式是bytes，如果不支持可设置为none
+			res.setHeader('Content-Range', 'bytes');
+            // 告诉浏览器我将会发送给你想要的范围数据和总大小			
+   			res.setHeader('Accept-Ranges', `bytes ${start}-${end}/${statObj.size}`);
+		}
+		console.log(`[range] start:${start} end:${end-1}`);
+		// 因为start是从0开始
+		return {start, end: end-1};
 	}
 	// 请求处理
 	handleRequest(){
