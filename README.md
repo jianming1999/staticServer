@@ -1,0 +1,2 @@
+# staticServer
+staticServer
